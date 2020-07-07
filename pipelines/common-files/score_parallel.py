@@ -16,10 +16,7 @@ def init():
     print("Started batch scoring by running init()")
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name',
-                        type=str,
-                        dest='model_name',
-                        help='Model to use for batch scoring')
+    parser.add_argument('--model_name', type=str, help='Model to use for batch scoring')
     args, _ = parser.parse_known_args()
 
     global current_run
@@ -52,15 +49,6 @@ def run(file_list):
     except Exception as e:
         error = str(e)
         return error
-
-def test():
-    global model
-    model = joblib.load("./tests/model.pkl")
-
-    # Simulate AML ingesting paths to the data files
-    files = ['../../sample-data/german_credit_data_batch_test_00.csv']
-    result = run(files)
-    print(result)
 
 if __name__ == "__main__":
     test()
