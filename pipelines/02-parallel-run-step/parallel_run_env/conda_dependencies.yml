@@ -1,4 +1,4 @@
-name: pipeline-env
+name: batch-scoring-env
 channels:
   - conda-forge
   - defaults
