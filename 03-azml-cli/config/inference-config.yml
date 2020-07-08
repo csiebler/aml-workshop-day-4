@@ -1,0 +1,9 @@
+entryScript: score.py
+runtime: python
+condaFile: ../common-files/conda.yml
+extraDockerfileSteps:
+schemaFile:
+sourceDirectory: ../common-files/
+enableGpu: False
+baseImage:
+baseImageRegistry:

@@ -1,0 +1,16 @@
+script: ../common-files/train.py
+arguments: [--data-path, /data]
+target: cpu-cluster
+framework: Python
+nodeCount: 1
+environment:
+  environmentVariables:
+    EXAMPLE_ENV_VAR: EXAMPLE_VALUE
+  python:
+    userManagedDependencies: false
+    interpreterPath: python
+    condaDependenciesFile: ../common-files/conda.yml
+  docker:
+    enabled: true
+    baseImage: mcr.microsoft.com/azureml/base:intelmpi2018.3-ubuntu16.04
+    sharedVolumes: true
