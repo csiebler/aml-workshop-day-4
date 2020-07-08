@@ -20,9 +20,23 @@ az ml folder attach -g <your resource group> -w <your workspace name>
 
 ### Submit training job
 
-TODO: Add training data!
+Next, we need to retrieve the training dataset's `id` (we've created the dataset in tutorial `00-single-training-step`):
 
-Next, we can submit a training job to our compute cluster:
+```
+az ml dataset show -n german-credit-train-tutorial
+```
+
+Note the `id` and open [`config/train-amlcompute.runconfig`](config/train-amlcompute.runconfig). In this file, set the dataset id in the last section:
+
+```
+data:
+  training_dataset:
+    dataLocation:
+      dataset:
+        id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx << Replace with your dataset's id!
+````
+
+Save the file - now we can submit a training job to our compute cluster:
 
 ```cli
 az ml run submit-script -c config/train-amlcompute -e german-credit-train-amlcompute -t run.json
@@ -53,27 +67,31 @@ az ml model deploy -n credit-model-aci -m credit-model:1 --inference-config-file
 * `--inference-config-file` defines the runtime environement for our model
 * `--deploy-config-file` defines on what infrastructure the deployment should happen
 
-We can test the ACI endpoint using the following request (make sure to replace the URL with your container's URL):
+We can test the ACI endpoint using the following request (make sure to replace the URL with your container's URL). You can find the same code also in [`test_webservice.ipynb`](test_webservice.ipynb):
 
-```
-POST http://xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx.xxxxxx.azurecontainer.io/score HTTP/1.1
-Content-Type: application/json
+```python
+import requests
 
-{ 
-    "data": [
-        {
-        "Age": 20,
-        "Sex": "male",
-        "Job": 0,
-        "Housing": "own",
-        "Saving accounts": "little",
-        "Checking account": "little",
-        "Credit amount": 100,
-        "Duration": 48,
-        "Purpose": "radio/TV"
-        }
-    ]
+url = 'http://xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx.xxxxxx.azurecontainer.io/score'
+
+test_data = {
+  'data': [{
+    "Age": 20,
+    "Sex": "male",
+    "Job": 0,
+    "Housing": "own",
+    "Saving accounts": "little",
+    "Checking account": "little",
+    "Credit amount": 100,
+    "Duration": 48,
+    "Purpose": "radio/TV"
+  }]
 }
+
+headers = {'Content-Type': 'application/json'}
+response = requests.post(url, json=test_data, headers=headers)
+
+print("Prediction (good, bad):", response.text)
 ```
 
 Lastly, we can remove the ACI-based service via:
@@ -82,8 +100,4 @@ Lastly, we can remove the ACI-based service via:
 az ml service delete --name credit-model-aci
 ```
 
-See the included [`config/deployment-config-aks-prod.yml`](config/deployment-config-aks-prod.yml) for the deployment definition to AKS. The inference config itself won't need to change!
-
-## Using the CLI for pipelines
-
-Run pipeline
+See the included [`config/deployment-config-aks-prod.yml`](config/deployment-config-aks-prod.yml) for the deployment definition to AKS. The inference config itself won't need to be changed!

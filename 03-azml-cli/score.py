@@ -8,7 +8,7 @@ from azureml.core.model import Model
 def init():
     global model
 
-    model_filename = 'german-credit-basic-model'
+    model_filename = 'model.pkl'
 
     # AZUREML_MODEL_DIR is injected by AML
     model_dir = os.getenv('AZUREML_MODEL_DIR')
